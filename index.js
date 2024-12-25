@@ -3,12 +3,9 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 require("dotenv").config();
+require("./src/config/db_connection");
 
-
-
-// const postRoutes = require("./src/routes/Post");
-// const userRoute = require("./src/routes/User");
-
+const userRoute = require("./src/routes/User");
 
 const allowedOrigins = [
     process.env.FRONTEND_URL, 
@@ -31,6 +28,8 @@ app.use(
 app.get("/", (req, res) => {
   res.send("API Working on port 5000 ");
 });
+
+app.use("/user", userRoute);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

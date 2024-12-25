@@ -1,25 +1,21 @@
-# CastView
-CastView is a platform designed for managing casting requirements for various projects. Users can add their casting requirements and view all posted requirements.
+# TEXT SHARING
+TextShare is a platform designed for users to easily share text from their phones to a website. Users can quickly input and post text content from their mobile devices to be displayed on the platform.
 
 
 ## Features
 
-1: Add Casting Requirements: Users can submit details of casting requirements for their projects.
-2: View Requirements: Browse and filter through all casting requirements posted on the platform.
+1: Share Text Content: Users can write and submit text directly from their mobile devices to the platform.
+2: View Shared Text: Browse and filter through all text submissions posted on the platform.
 
 ## Technologies Used
 
-* Frontend: React.js, TypeScript
-* Backend: Node.js, Express
-* Database: MongoDB
-* Authentication: JWT (JSON Web Tokens)
+* Node.js 
+* Express
 
 Create .env with these values:
 
-MONGO_URL,JWT_SECRET,FRONTEND_URL,IMAGEKIT_PRIVATE,IMAGEKIT_PUBLIC,PORT
+JWT_SECRET,FRONTEND_URL,PORT
 
-## frontend github
- [frontend github click here](https://github.com/devbyanurag/CastView-frontend)
 
 
 
