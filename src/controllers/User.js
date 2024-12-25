@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
 
 
     // Return the saved user and the token in the response
-    res.json({ message: "User Created", token: url });
+    res.json({ message: "User Created", token });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
