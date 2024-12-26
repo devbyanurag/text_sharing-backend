@@ -1,5 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/UserSchema");
+const TextModel = require("../models/TextSchema");
+
 const passwordUtils = require("../utils/passwordUtils");
 
 const jwt = require("jsonwebtoken");
@@ -43,7 +45,6 @@ const createUser = async (req, res) => {
     // let url = `${process.env.FRONTEND_URL}/signupVerify/${token}`;
     let url = `http://localhost:5001/user/verifyLogin/${token}`;
 
-
     // Return the saved user and the token in the response
     res.json({ message: "User Created", token });
   } catch (err) {
@@ -65,13 +66,21 @@ const loginUser = async (req, res) => {
     if (!user.verified) {
       return res.status(404).json({ message: "User not found" });
     }
-    if (! await passwordUtils.verifyPassword(password,user.password)) {
+    if (!(await passwordUtils.verifyPassword(password, user.password))) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "3d",
-    });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "3d",
+      }
+    );
 
     const userToSend = {
       id: user.id,
@@ -100,6 +109,13 @@ const verifyLogin = async (req, res) => {
 
     // Find the user by id and update verified to true
     const user = await User.findOneAndUpdate({ id }, { verified: true });
+    const newText = new TextModel({
+      id,
+      text: "",
+    });
+
+    // Save the new user
+    await newText.save();
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -114,7 +130,25 @@ const verifyLogin = async (req, res) => {
 
     res.json({ user: userToSend });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: "Invalid or expired token" });
+  }
+};
+
+const validateToken = async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1]; // Extract token from the Authorization header
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // JWT_SECRET is in .env
+    res.status(200).json({ valid: true, user: decoded }); // Return decoded user information
+  } catch (error) {
+    res.status(403).json({ valid: false, message: "Invalid token." });
   }
 };
 
@@ -169,6 +203,6 @@ module.exports = {
   updateUser,
   deleteUser,
   loginUser,
-
-  verifyLogin
+  validateToken,
+  verifyLogin,
 };

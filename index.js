@@ -5,14 +5,12 @@ require("dotenv").config();
 require("./src/config/db_connection");
 
 const userRoute = require("./src/routes/User");
+const textRoute = require("./src/routes/Text")
 
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "*",
-];
+const allowedOrigins = [process.env.FRONTEND_URL];
 
 app.use(
   cors({
@@ -28,17 +26,27 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("API Working on port 5000 ");
+  res.send("API Working on port 5000");
 });
 
 app.use("/user", userRoute);
-
+app.use("/text", textRoute);
 
 
 const server = http.createServer(app);
 const port = process.env.PORT || 5000;
+
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`Port ${port} is already in use. Please use a different port.`);
+    process.exit(1);
+  } else {
+    console.error("Server error:", err);
+  }
 });
 
 module.exports = app;
